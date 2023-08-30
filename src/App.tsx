@@ -1,14 +1,12 @@
-import './App.css'
+import './App.scss'
 import { useEffect, useRef, useState } from 'react'
 import { ethers } from 'ethers'
 import { JsonRpcSigner } from 'ethers'
-import { TransactionResponse } from 'ethers'
 import { FeeData } from 'ethers'
 
 function App() {
   const toAddress = useRef<HTMLInputElement | null>(null)
   const [nonce, setNonce] = useState('')
-  const [tx, setTx] = useState<TransactionResponse | null>(null)
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null)
   const [feeData, setFeeData] = useState<
     Pick<FeeData, 'maxFeePerGas' | 'maxPriorityFeePerGas'>
@@ -16,11 +14,21 @@ function App() {
     maxFeePerGas: null,
     maxPriorityFeePerGas: null,
   })
+  const [formError, setFormError] = useState('')
+
+  const isValidateTransaction = () => {
+    if (!toAddress.current?.value) {
+      setFormError('To address is required.')
+      return false
+    }
+    if (!nonce) return false
+
+    return true
+  }
 
   const sendTransaction = async () => {
-    if (!signer) return console.log('please connect to metamask account')
-    if (!toAddress.current || !nonce)
-      return console.log('please enter To address')
+    if (!signer) return alert('please connect to metamask account')
+    if (!toAddress.current || !isValidateTransaction()) return
 
     try {
       const transaction = {
@@ -33,28 +41,27 @@ function App() {
 
       const tx = await signer.sendTransaction(transaction)
       await tx.wait()
-      setTx(tx)
+      if (tx) alert(`transaction succeed!`)
     } catch (error) {
       console.error('Error occurred when sending transaction:', error)
+      alert(error)
     }
   }
 
   useEffect(() => {
     const connectToMetaMask = async () => {
-      let provider
-      if (window.ethereum == null) {
-        console.log('MetaMask not installed; using read-only defaults')
-        provider = ethers.getDefaultProvider('HTTP://127.0.0.1:7545') // ganache
-      } else {
-        provider = new ethers.BrowserProvider(window.ethereum)
+      if (window.ethereum == null)
+        return alert('MetaMask not installed; using read-only defaults')
 
-        const connectedSigner = await provider.getSigner()
-        const nextNonce = await connectedSigner.getNonce()
-        const currentFeeData = await provider.getFeeData()
-        setFeeData(currentFeeData)
-        setSigner(connectedSigner)
-        setNonce(nextNonce.toString())
-      }
+      const provider = new ethers.BrowserProvider(window.ethereum)
+
+      const connectedSigner = await provider.getSigner()
+      const nextNonce = await connectedSigner.getNonce()
+      const currentFeeData = await provider.getFeeData()
+
+      setFeeData(currentFeeData)
+      setSigner(connectedSigner)
+      setNonce(nextNonce.toString())
     }
     connectToMetaMask()
   }, [])
@@ -62,18 +69,23 @@ function App() {
   return (
     <div>
       <h2>Send Transaction</h2>
-      <h3>Enter [To address] and [nonce] to send!</h3>
-      <h4>address: {signer?.address}</h4>
-      Nonce:
-      <input
-        type='text'
-        placeholder='Nonce'
-        value={nonce}
-        onChange={(e) => setNonce(e.target.value)}
-      />
-      <input type='text' placeholder='To Address' ref={toAddress} />
-      <button onClick={sendTransaction}>Send Transaction</button>
-      {tx?.hash && <p>Transaction Hash: {tx?.hash}</p>}
+      <h3>Enter [To address] and [Nonce] to send!</h3>
+      <p className='address'>address: {signer?.address}</p> <hr />
+      <div className='inputLabel__wrapper'>
+        <label>Nonce:</label>
+        <input
+          type='text'
+          placeholder='Nonce'
+          value={nonce}
+          onChange={(e) => setNonce(e.target.value)}
+        />
+      </div>
+      <div className='inputLabel__wrapper required'>
+        <label>To address:</label>
+        <input type='text' placeholder='To Address' ref={toAddress} />
+      </div>
+      {formError && <p>{formError}</p>}
+      <button onClick={sendTransaction}>Send</button>
     </div>
   )
 }

@@ -1,0 +1,37 @@
+#root {
+  min-width: 70%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.address {
+  color: #747bff;
+}
+
+label {
+  color: #f9f9f9;
+}
+
+.inputLabel__wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  label {
+    max-width: 25%;
+  }
+
+  input {
+    width: 70%;
+  }
+
+  &:not(:first-child) {
+    margin-top: 24px;
+  }
+
+  &.required label::after {
+    content: '*';
+    color: red;
+  }
+}
