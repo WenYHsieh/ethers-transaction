@@ -1,27 +1,22 @@
-# React + TypeScript + Vite
+# ether-transaction
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+使用 Ethers.js 實作的簡單傳送 transaction 用 DApp。
 
-Currently, two official plugins are available:
+## 連接 metamask
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+測試範例是連接到測試網路 Ganache，並匯入了兩個測試用帳號 `Account 3`, `Account 4` 作發送 transaction 測試使用。
 
-## Expanding the ESLint configuration
+<img src="imgs/readme04.png" width="300">
+<img src="imgs/readme03.png" width="300">
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+進到頁面後若已經有登入 metaMask，會直接匯入使用中的帳號，並在介面上顯示 `address`，作為發送 transaction 帳號。
 
-- Configure the top-level `parserOptions` property like this:
+## 填寫 transaction 資訊
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+Nonce 自動帶入下一筆，To address 可填寫 transaction 目標的 address。（礦工費使用 EIP-1559）
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+<img src="imgs/readme02.png" width="500">
+
+點 Send 後，預設會發送 0.1 ETH 給目標 address。
+
+<img src="imgs/readme01.png" width="300">

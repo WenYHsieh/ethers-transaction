@@ -21,7 +21,6 @@ function App() {
       setFormError('To address is required.')
       return false
     }
-    if (!nonce) return false
 
     return true
   }
@@ -34,7 +33,7 @@ function App() {
       const transaction = {
         to: toAddress.current.value,
         value: ethers.parseEther('0.1'),
-        nonce: parseInt(nonce),
+        ...(nonce ? { nonce: parseInt(nonce) } : {}),
         ...feeData,
         gasPrice: null,
       }
