@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import './networkSettings.scss'
 
 // metamask default chains
 const defaultChains = [
@@ -15,10 +16,51 @@ const defaultChains = [
     chainHexId: '0xe704',
     optionName: `0xe704 / 59140 / Linea Goerli test network`,
   },
+  {
+    chainHexId: '0x539',
+    optionName: `0x539 / 1337 / Localhost test networks (including Ganache)`,
+  },
+]
+
+type FormData = {
+  networkName?: string
+  newRpcURL: string
+  chainID: string
+  currencySymbol: string
+  currencyName: string
+  currencyDecimals: string
+  blockExplorerURL?: string
+}
+
+const formConfig: Array<{
+  name: keyof FormData
+  label: string
+  require: boolean
+}> = [
+  { name: 'networkName', label: 'Network Name', require: false },
+  { name: 'newRpcURL', label: 'New RPC URL', require: true },
+  { name: 'chainID', label: 'Chain ID', require: true },
+  { name: 'currencySymbol', label: 'Native Currency Symbol', require: true },
+  { name: 'currencyName', label: 'Native Currency Name', require: true },
+  {
+    name: 'currencyDecimals',
+    label: 'Native Currency Decimals',
+    require: true,
+  },
+  { name: 'blockExplorerURL', label: 'block Explorer URL', require: true },
 ]
 
 const NetworkSettings = () => {
   const selectElement = useRef<HTMLSelectElement | null>(null)
+  const [formData, setFormData] = useState<FormData>({
+    networkName: '',
+    newRpcURL: '',
+    chainID: '',
+    currencySymbol: '',
+    currencyName: '',
+    currencyDecimals: '',
+    blockExplorerURL: '',
+  })
 
   const renderChainOptions = () => {
     return (
@@ -34,6 +76,33 @@ const NetworkSettings = () => {
     )
   }
 
+  const renderFields = () => {
+    return formConfig?.map(({ name, label, require }) => {
+      return (
+        <div
+          key={name}
+          className={`inputLabel__wrapper ${require ? 'required' : ''}`}
+        >
+          <label>{label} </label>
+          <input
+            type='text'
+            name={name}
+            value={formData[name]}
+            onChange={handleOnChange}
+          />
+        </div>
+      )
+    })
+  }
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value = '' } = e.target
+    setFormData({
+      ...formData,
+      [name]: value,
+    })
+  }
+
   const changeNetwork = async () => {
     if (!selectElement.current) return
 
@@ -47,41 +116,53 @@ const NetworkSettings = () => {
     })
   }
 
-  // const addCustomNetwork = async () => {
-  //   await window.ethereum.request({
-  //     id: 1,
-  //     jsonrpc: '2.0',
-  //     method: 'wallet_addEthereumChain',
-  //     params: [
-  //       {
-  //         chainId: '0x64',
-  //         chainName: 'Gnosis',
-  //         rpcUrls: ['https://rpc.ankr.com/gnosis'],
-  //         iconUrls: [
-  //           'https://xdaichain.com/fake/example/url/xdai.svg',
-  //           'https://xdaichain.com/fake/example/url/xdai.png',
-  //         ],
-  //         nativeCurrency: {
-  //           name: 'xDAI',
-  //           symbol: 'xDAI',
-  //           decimals: 18,
-  //         },
-  //         blockExplorerUrls: ['https://blockscout.com/poa/xdai/'],
-  //       },
-  //     ],
-  //   })
-  // }
+  const addCustomNetwork = async () => {
+    const {
+      networkName,
+      newRpcURL,
+      chainID,
+      currencySymbol,
+      currencyDecimals,
+      currencyName,
+      blockExplorerURL,
+    } = formData
+    await window.ethereum.request({
+      method: 'wallet_addEthereumChain',
+      params: [
+        {
+          chainId: chainID,
+          chainName: networkName,
+          rpcUrls: [newRpcURL],
+          nativeCurrency: {
+            name: currencyName,
+            symbol: currencySymbol,
+            decimals: parseInt(currencyDecimals),
+          },
+          blockExplorerUrls: [blockExplorerURL],
+        },
+      ],
+    })
+  }
 
   return (
     <>
       <h2>Network Setting</h2>
+      <h4> Switch NetWork</h4>
+      <hr />
       <div className='selectLabel__wrapper'>
-        <label> Chain ID (HEX / Decimal / Chain Name): </label>
+        <label> Chain ID: </label>
         {renderChainOptions()}
-        <button onClick={changeNetwork}>Change to test network</button>
       </div>
+      <button type='submit' onClick={changeNetwork}>
+        Send
+      </button>
 
-      {/* <button onClick={addCustomNetwork}>Add custom network</button> */}
+      <h4> Add Network</h4>
+      <hr />
+      <form>{renderFields()}</form>
+      <button type='submit' onClick={addCustomNetwork}>
+        Send
+      </button>
     </>
   )
 }

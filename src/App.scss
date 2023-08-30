@@ -1,8 +1,9 @@
 #root {
+  width: 700px;
   max-width: 80%;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
+  // text-align: center;
 }
 
 :root {
@@ -37,7 +38,7 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-  margin-top: 24px;
+  margin: 24px 0;
 
   &:hover {
     border-color: #646cff;
@@ -58,5 +59,28 @@ button {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+.inputLabel__wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  label {
+    max-width: 30%;
+  }
+
+  input {
+    width: 60%;
+  }
+
+  &:not(:first-child) {
+    margin-top: 24px;
+  }
+
+  &.required label::after {
+    content: '*';
+    color: red;
   }
 }

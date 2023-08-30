@@ -69,19 +69,18 @@ function SendTransaction() {
     <div className='sendTransaction__container'>
       <h2>Send Transaction</h2>
       <h3>Enter [To address] and [Nonce] to send!</h3>
-      <p className='address'>address: {signer?.address}</p> <hr />
+      <p className='address'>address {signer?.address}</p> <hr />
       <div className='inputLabel__wrapper'>
-        <label>Nonce:</label>
+        <label>Nonce</label>
         <input
-          type='text'
-          placeholder='Nonce'
+          type='number'
           value={nonce}
           onChange={(e) => setNonce(e.target.value)}
         />
       </div>
       <div className='inputLabel__wrapper required'>
-        <label>To address:</label>
-        <input type='text' placeholder='To Address' ref={toAddress} />
+        <label>To address </label>
+        <input type='text' ref={toAddress} />
       </div>
       {formError && <p>{formError}</p>}
       <button onClick={sendTransaction}>Send</button>

@@ -10,27 +10,4 @@
   label {
     color: #f9f9f9;
   }
-
-  .inputLabel__wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-
-    label {
-      max-width: 25%;
-    }
-
-    input {
-      width: 70%;
-    }
-
-    &:not(:first-child) {
-      margin-top: 24px;
-    }
-
-    &.required label::after {
-      content: '*';
-      color: red;
-    }
-  }
 }

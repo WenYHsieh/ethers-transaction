@@ -1,0 +1,12 @@
+.selectLabel__wrapper {
+  display: flex;
+  justify-content: space-between;
+
+  label {
+    max-width: 30%;
+  }
+
+  select {
+    width: 60%;
+  }
+}
