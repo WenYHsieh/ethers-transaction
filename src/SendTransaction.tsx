@@ -67,7 +67,6 @@ function SendTransaction() {
   return (
     <div className='sendTransaction__container'>
       <h2>Send Transaction</h2>
-      <h3>Enter [To address] and [Nonce] to send!</h3>
       <p className='address'>address: {signer?.address}</p>
       <button onClick={connectToMetaMask}>Connect to metamask</button>
       <hr />

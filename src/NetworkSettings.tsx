@@ -37,7 +37,7 @@ const formConfig: Array<{
   label: string
   require: boolean
 }> = [
-  { name: 'networkName', label: 'Network Name', require: false },
+  { name: 'networkName', label: 'Network Name', require: true },
   { name: 'newRpcURL', label: 'New RPC URL', require: true },
   { name: 'chainID', label: 'Chain ID', require: true },
   { name: 'currencySymbol', label: 'Native Currency Symbol', require: true },
@@ -188,14 +188,14 @@ const NetworkSettings = () => {
         {renderChainOptions()}
       </div>
       <button type='submit' onClick={changeNetwork}>
-        Send
+        Switch
       </button>
 
       <h4> Add Network</h4>
       <hr />
       <form>{renderFields()}</form>
       <button type='submit' onClick={addCustomNetwork}>
-        Send
+        Add
       </button>
     </>
   )
