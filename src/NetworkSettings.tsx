@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './networkSettings.scss'
 
 // metamask default chains
@@ -29,7 +29,7 @@ type FormData = {
   currencySymbol: string
   currencyName: string
   currencyDecimals: string
-  blockExplorerURL?: string
+  blockExplorerURL: string
 }
 
 const formConfig: Array<{
@@ -52,6 +52,7 @@ const formConfig: Array<{
 
 const NetworkSettings = () => {
   const selectElement = useRef<HTMLSelectElement | null>(null)
+  const [chainId, setChainId] = useState('')
   const [formData, setFormData] = useState<FormData>({
     networkName: '',
     newRpcURL: '',
@@ -67,7 +68,11 @@ const NetworkSettings = () => {
       <select ref={selectElement}>
         {defaultChains?.map(({ chainHexId, optionName }) => {
           return (
-            <option key={chainHexId} value={chainHexId}>
+            <option
+              key={chainHexId}
+              value={chainHexId}
+              selected={chainId === chainHexId}
+            >
               {optionName}
             </option>
           )
@@ -116,7 +121,23 @@ const NetworkSettings = () => {
     })
   }
 
+  const validForm = () => {
+    const invalidField: Array<string> = []
+    const requiredFieldName = formConfig
+      .filter((fieldConfig) => {
+        return fieldConfig.require
+      })
+      .map((fieldConfig) => fieldConfig.name)
+    requiredFieldName.forEach((fieldName) => {
+      if (!formData[fieldName]) invalidField.push(`${fieldName} is required.`)
+    })
+    return invalidField.length === 0 ? '' : invalidField.join('\n')
+  }
+
   const addCustomNetwork = async () => {
+    const errorMsg = validForm()
+    if (errorMsg) return alert(errorMsg)
+
     const {
       networkName,
       newRpcURL,
@@ -126,6 +147,7 @@ const NetworkSettings = () => {
       currencyName,
       blockExplorerURL,
     } = formData
+
     await window.ethereum.request({
       method: 'wallet_addEthereumChain',
       params: [
@@ -143,6 +165,18 @@ const NetworkSettings = () => {
       ],
     })
   }
+
+  useEffect(() => {
+    const getChainId = async () => {
+      if (window.ethereum == null) return alert('MetaMask not installed!')
+
+      const currentChainId = await window.ethereum.request({
+        method: 'eth_chainId',
+      })
+      setChainId(currentChainId)
+    }
+    getChainId()
+  }, [])
 
   return (
     <>
