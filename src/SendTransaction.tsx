@@ -16,7 +16,8 @@ function SendTransaction() {
   })
 
   const connectToMetaMask = async () => {
-    if (window.ethereum == null) return alert('MetaMask not installed!')
+    if (typeof window.ethereum === 'undefined')
+      return alert('MetaMask not installed!')
 
     const provider = new ethers.BrowserProvider(window.ethereum)
 

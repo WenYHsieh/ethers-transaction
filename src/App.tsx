@@ -5,11 +5,13 @@ import { useEffect } from 'react'
 
 const App = () => {
   useEffect(() => {
-    if (window.ethereum === null) return alert('MetaMask not installed!')
     const handleChainChanged = () => window.location.reload()
 
+    if (typeof window.ethereum === 'undefined')
+      return alert('MetaMask not installed!')
+
     window.ethereum.on('chainChanged', handleChainChanged)
-  })
+  }, [])
   return (
     <>
       <SendTransaction />

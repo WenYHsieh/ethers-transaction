@@ -168,7 +168,7 @@ const NetworkSettings = () => {
 
   useEffect(() => {
     const getChainId = async () => {
-      if (window.ethereum == null) return alert('MetaMask not installed!')
+      if (typeof window.ethereum === 'undefined') return
 
       const currentChainId = await window.ethereum.request({
         method: 'eth_chainId',
